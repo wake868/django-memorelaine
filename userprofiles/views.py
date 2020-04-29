@@ -1,19 +1,25 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import login, logout, authenticate
-from .forms import UserProfileForm
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.models import User
+from .forms import UserProfileForm, UserForm
 from .models import UserProfile
 
 
 @login_required
 def home(request):
-    if request.user.is_authenticated:
-        username = request.user.username
+    user = get_object_or_404(User, pk=request.user.id)
+
+    if request.method == 'POST':
+        form = UserForm(request.POST, instance=user)
+        if form.is_valid():
+            user = form.save()
+            return redirect('userprofiles:home')
     else:
-        username = 'not logged in'
+        form = UserForm(instance=user)
     
-    context = {'username': username}
+    context = {'user': user, 'form': form}
     return render(request, 'userprofiles/home.html', context)
 
 
