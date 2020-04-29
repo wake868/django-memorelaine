@@ -68,6 +68,8 @@ def login_user(request):
             else:
                 login(request, user)
                 return redirect('userprofiles:home')
+        else:
+            return render(request, 'userprofiles/login.html', {'form': AuthenticationForm(), 'error': 'Username and password combination is invalid.'})
 
 
 @login_required
