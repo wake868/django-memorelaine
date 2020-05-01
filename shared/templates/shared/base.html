@@ -24,15 +24,18 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
         <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-           <a class="nav-link" href="#">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">About</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Other</a>
-          </li>
+            <li class="nav-item">
+                {% if request.user.is_authenticated %}
+                    <!-- <a href="#" onclick="$('#signOutBtn').click()" class="nav-link btn">Logout {{ user }}</a> -->
+                    <form method="POST" action="{% url 'userprofiles:logout_user' %}">
+                        {% csrf_token %}
+                        <button class="btn btn-secondary" id="signOutBtn" type="submit">Logout</button>
+                    </form>
+                {% else %}
+                    <a class="btn btn-secondary" href="{% url 'userprofiles:login_user' %}">Login</a>
+                {% endif %}
+            </li>
+            
         </ul>
       </div>
       </div>

@@ -19,4 +19,5 @@ from django.urls import path, include
 urlpatterns = [
     path('w@k3b@ck3ndp0rt@l/', admin.site.urls),
     path('userprofiles/', include('userprofiles.urls')),
+    path('', include('memorywall.urls')),
 ]

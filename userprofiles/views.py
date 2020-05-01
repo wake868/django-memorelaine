@@ -5,6 +5,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 from .forms import UserProfileForm, UserForm
 from .models import UserProfile
+from django.utils.http import is_safe_url
 
 
 @login_required
@@ -67,7 +68,12 @@ def login_user(request):
                 return render(request, 'userprofiles/login.html', {'form': AuthenticationForm(), 'error': 'Username or password is invalid.'})
             else:
                 login(request, user)
-                return redirect('userprofiles:home')
+
+                next = request.GET.get('next', '/')
+                # check that next is safe
+                if not is_safe_url(next, request.get_host()):
+                    next = '/'
+                return redirect(next)
         else:
             return render(request, 'userprofiles/login.html', {'form': AuthenticationForm(), 'error': 'Username and password combination is invalid.'})
 
@@ -76,4 +82,9 @@ def login_user(request):
 def logout_user(request):
     if request.method == 'POST':
         logout(request)
-        return redirect('userprofiles:home')
+
+        next = request.GET.get('next', '/')
+        # check that next is safe
+        if not is_safe_url(next, request.get_host()):
+            next = '/'
+        return redirect(next)
